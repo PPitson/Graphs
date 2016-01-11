@@ -43,9 +43,12 @@ object gui extends SimpleSwingApplication{
   def askForWeight: Int = {
     var weight = 0
     if (weightedBox.selected){
-      def isAllDigits(x: String) = x forall Character.isDigit
+      def isValid(s: String) = s.forall(c => (c.isDigit || c == '.' || c == '-'))
       val input = Dialog.showInput(null, "Weight: ", "Type in weight", Dialog.Message.Plain, Swing.EmptyIcon, Nil, "0")
-		  if (input != None && input.get.length > 0 && isAllDigits(input.get)) weight = input.get.toInt
+		  if (input != None && input.get.length > 0 && isValid(input.get)){
+		    if (input.get contains ".") weight = input.get.toDouble.toInt
+		    else weight = input.get.toInt
+		  }
 		}
     weight
   }
