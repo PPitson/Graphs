@@ -154,6 +154,8 @@ object gui extends SimpleSwingApplication{
            if (vertex1 !=null && vertex2 != null){
              if (g.whichEdge(vertex1, vertex2, 0) != null) Dialog.showMessage(null, "Multigraphs are not allowed.", "Multigraph error", 
                                                        Dialog.Message.Error)
+             else if (vertex1 == vertex2) Dialog.showMessage(null, "Loops are not allowed.", "Multigraph error", 
+                                                       Dialog.Message.Error)
              else{
                val weight = askForWeight
                g.addEdge(vertex1, vertex2, weight)
@@ -198,12 +200,9 @@ object gui extends SimpleSwingApplication{
          val starty = e.start.point.y+Vertex.size/2
          val endx = e.end.point.x+Vertex.size/2
          val endy = e.end.point.y+Vertex.size/2
-         if (e.start == e.end) graphics.drawOval(startx, starty - Vertex.size, Vertex.size, Vertex.size)
-         else {
-           graphics.drawLine(startx, starty, endx, endy)
-           if (g.directed) drawArrow(graphics, startx, starty, (startx + endx)/2, (starty + endy)/2)
-           if (g.weighted) graphics.drawString(e.weight.toString(), (startx + endx)/2-10, (starty + endy)/2-10)
-         }
+         graphics.drawLine(startx, starty, endx, endy)
+         if (g.directed) drawArrow(graphics, startx, starty, (startx + endx)/2, (starty + endy)/2)
+         if (g.weighted) graphics.drawString(e.weight.toString(), (startx + endx)/2-10, (starty + endy)/2-10)
        }
        for (v <- g.vertices){
          graphics.setColor(Color.BLUE)
@@ -220,7 +219,6 @@ object gui extends SimpleSwingApplication{
   
   val instructionsArea = new TextArea {
     editable = false
-    //maximumSize = new Dimension(200,800)
     columns = 15
     background = Color.WHITE
     text = "Welcome to graph GUI app. First, choose your graph's type. If you wanted to change it, you'd have to delete "+
@@ -237,7 +235,9 @@ object gui extends SimpleSwingApplication{
     background = Color.LIGHT_GRAY
     text = "Results will be here"
  }
+ 
 
+   
   def top = new MainFrame {
     title = "Some sick title"
     
@@ -284,7 +284,10 @@ object gui extends SimpleSwingApplication{
 
           case ButtonClicked(`directedBox`) => g.directed = directedBox.selected
           case ButtonClicked(`weightedBox`) => g.weighted = weightedBox.selected
-          case ButtonClicked(`computeButton`) => resultsArea.text = "cyclic: " + Cycle.isCyclic(g).toString()
+          case ButtonClicked(`computeButton`) => resultsArea.text = 
+            "size: " + g.edges.size + "\n" +
+            "order: " + g.vertices.size + "\n" +
+            "cyclic: " + Cycle.isCyclic(g).toString() + "\n" 
         }
         
       } -> West
@@ -298,6 +301,7 @@ object gui extends SimpleSwingApplication{
         contents += resultsArea
       } -> East
     }
+    
     menuBar = new MenuBar{
       contents += new Menu("File"){
         contents += new MenuItem(Action("Open graph"){openGraph})
