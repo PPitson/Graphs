@@ -5,7 +5,7 @@ object Divided {
   def DFSDIV(g:Graph,color:Array[Int],u:Int,col:Int):Boolean={
     var result=true;
     color(u)=col;
-    for(i<-g.graph(u)){
+    for(i<-g.graph(u);if(result)){
      // println(u+" "+i.label+" "+color(u)+" "+color(i.label)+" "+result);
       if(color(i.label)==0) 
         result=DFSDIV(g,color,i.label,col%2+1);
