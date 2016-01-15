@@ -287,7 +287,9 @@ object gui extends SimpleSwingApplication{
           case ButtonClicked(`computeButton`) => resultsArea.text = 
             "size: " + g.edges.size + "\n" +
             "order: " + g.vertices.size + "\n" +
-            "cyclic: " + Cycle.isCyclic(g).toString() + "\n" 
+            "cyclic: " + Cycle.isCyclic(g).toString() + "\n" +
+            "bipartite: " + Divided.isDivided(g).toString() + "\n" +
+            "transposition: " + Transposition.transposition(g) + "\n" 
         }
         
       } -> West
