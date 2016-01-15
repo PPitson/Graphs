@@ -7,7 +7,7 @@ object Cycle {
     color(u)=1;
     var result=false; 
     for(i <-g.graph(u);if(!result)){
-       println(u+" "+i.label+" "+color(u)+" "+color(i.label)+" "+result);
+       //println(u+" "+i.label+" "+color(u)+" "+color(i.label)+" "+result);
       if(color(i.label)==0){
         result=DFS(g,color,i.label);}
       else if(color(i.label)==1)

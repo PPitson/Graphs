@@ -70,6 +70,7 @@ object gui extends SimpleSwingApplication{
   	resultsArea.text = ""
     drawingPanel.repaint()
   }
+  
 
   
   def openGraph {
@@ -83,7 +84,7 @@ object gui extends SimpleSwingApplication{
   
   def saveGraph {
     val chooser = new FileChooser
-    if (chooser.showOpenDialog(null) == FileChooser.Result.Approve) {
+    if (chooser.showSaveDialog(null) == FileChooser.Result.Approve) {
       val pw = new java.io.PrintWriter(chooser.selectedFile)
       saveToFile(g, pw)
       pw.close()
@@ -289,7 +290,8 @@ object gui extends SimpleSwingApplication{
             "order: " + g.vertices.size + "\n" +
             "cyclic: " + Cycle.isCyclic(g).toString() + "\n" +
             "bipartite: " + Divided.isDivided(g).toString() + "\n" +
-            "transposition: " + Transposition.transposition(g) + "\n" 
+            "transposition: " + Transposition.transposition(g) + "\n" +
+            "degree: " + Degree.degree(g) + "\n"
         }
         
       } -> West

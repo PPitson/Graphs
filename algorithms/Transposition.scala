@@ -2,6 +2,8 @@ package algorithms
 
 import utils._
 import java.io.PrintWriter
+import main.gui.saveGraph
+import scala.swing.FileChooser
 
 object Transposition {
   def transposition(g: Graph): String = {
@@ -11,9 +13,14 @@ object Transposition {
     var y = 10
     for (v <- g.vertices) tg.addVertex(v.point.x, v.point.y)
     for (e <- g.edges) tg.addEdge(e.end, e.start, e.weight)
-    val pw = new java.io.PrintWriter("transposition.txt")
-    GraphFile.saveToFile(tg, pw)
-    pw.close()
-    return "saved to file transposition.txt"
+    
+    val chooser = new FileChooser
+    chooser.peer.setDialogTitle("Save transposition of the graph")
+    if (chooser.showSaveDialog(null) == FileChooser.Result.Approve) {
+      val pw = new java.io.PrintWriter(chooser.selectedFile)
+      GraphFile.saveToFile(tg, pw)
+      pw.close()
+    }
+    return "saved to file " + chooser.selectedFile.toString()
   }
 }
