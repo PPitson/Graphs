@@ -1,10 +1,13 @@
 package algorithms
 import utils._
 
-object Bridges {
+object ArticulationPoints {
+
   var in=0;
-  var wynik="";
-  def DFSBRIDGES(g:Graph,low:Array[Int],time:Array[Int],color:Array[Int],ans:Array[Int],u:Int,res:Array[Int]):Unit={
+  var root=0;
+  var curroot=0;
+
+  def DFSARTICULATE(g:Graph,low:Array[Int],time:Array[Int],color:Array[Int],ans:Array[Int],u:Int,res:Array[Int]):Unit={
     color(u)=1;
     in=in+1;
     time(u)=in;
@@ -12,11 +15,12 @@ object Bridges {
     for(i<-g.graph(u)){
       if(i.label!=ans(u)){
         if(color(i.label)==0){
+          if(u==curroot)
+            root+=1;
           ans(i.label)=u;
-           DFSBRIDGES(g,low,time,color,ans,i.label,res);
-          if(low(i.label)==time(i.label))
-            if(ans(i.label)==u) 
-              wynik=wynik.concat("krawedz"+u+"->"+i.label+" jest mostem");
+           DFSARTICULATE(g,low,time,color,ans,i.label,res);
+          if(low(i.label)>=time(u) && u!=curroot)  
+              res(u)=1;
             if(low(u)>low(i.label))
               low(u)=low(i.label);
         }
@@ -27,13 +31,9 @@ object Bridges {
       }
     }
     color(u)=2;
-    
-    
-    
-    
   }
-  def Bridges(g:Graph) ={
-    wynik="";
+
+  def compute(g:Graph) ={
     var color: Array[Int] = new Array[Int](g.vertices.size);
     var low: Array[Int] = new Array[Int](g.vertices.size);
     var time: Array[Int] = new Array[Int](g.vertices.size);
@@ -49,10 +49,18 @@ object Bridges {
     for(i<-0 until g.vertices.size){
       if(color(i)==0)
       {
-
-        DFSBRIDGES(g,low,time,color,ans,i,res);
+        curroot=i;
+        root=0;
+        DFSARTICULATE(g,low,time,color,ans,i,res);
+        if(root>1)
+          res(curroot)=1;
       }
-     }
-     wynik;
+    }
+    var L="\n";
+    for(i<-0 until res.size){
+      if(res(i)==1)
+        L=L.concat(i.toString()+"\n");
+    }
+    L
   }
 }

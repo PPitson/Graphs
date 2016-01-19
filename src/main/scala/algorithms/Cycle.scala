@@ -3,6 +3,7 @@ package algorithms
 import utils._
 
 object Cycle {
+
   def DFS(g: Graph,color:Array[Int],u: Int):Boolean={
     color(u)=1;
     var result=false; 
@@ -15,6 +16,7 @@ object Cycle {
     }
     result;
   }
+
   def isCyclic(g: Graph): Boolean = {
     var result=false;
     val Supp=new Support;
@@ -24,8 +26,7 @@ object Cycle {
       if(g.directed)
         Supp.clearColor(color);
       if(DFS(g,color,j))
-        result=true;
-      
+        result=true
     }
     result;
   }

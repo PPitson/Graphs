@@ -1,6 +1,5 @@
 package utils
 
-import scala.collection.mutable.ArrayBuffer
 import java.awt.Point
 
 object Vertex{

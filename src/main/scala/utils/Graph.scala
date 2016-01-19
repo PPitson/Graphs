@@ -4,7 +4,8 @@ import scala.collection.mutable.{ListBuffer, ArrayBuffer}
 import java.awt.Point
 
 class Graph(var directed: Boolean, var weighted: Boolean, val vertices: ListBuffer[Vertex] = new ListBuffer[Vertex](),
-    val edges: ListBuffer[Edge] = new ListBuffer[Edge](), val graph: ArrayBuffer[ListBuffer[Vertex]] = new ArrayBuffer[ListBuffer[Vertex]]()){
+            val edges: ListBuffer[Edge] = new ListBuffer[Edge](),
+            val graph: ArrayBuffer[ListBuffer[Vertex]] = new ArrayBuffer[ListBuffer[Vertex]]()){
   
   def convert = {
     val result = new Array[List[Vertex]](graph.size)

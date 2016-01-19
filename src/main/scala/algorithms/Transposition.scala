@@ -1,17 +1,17 @@
 package algorithms
 
 import utils._
-import java.io.PrintWriter
-import main.gui.saveGraph
 import scala.swing.FileChooser
 
 object Transposition {
+
   def transposition(g: Graph): String = {
+    if (g.vertices.size == 0) return ""
     if (!g.directed) return "returns same graph(because it's undirected)"
     val tg = new Graph(true, g.weighted)
     var x = 10
     var y = 10
-    for (v <- g.vertices) tg.addVertex(v.point.x, v.point.y)
+    for (v <- g.vertices) tg.addVertex(v.point.x - Vertex.size/2, v.point.y - Vertex.size/2)
     for (e <- g.edges) tg.addEdge(e.end, e.start, e.weight)
     
     val chooser = new FileChooser

@@ -1,20 +1,18 @@
-package main
+package gui
 
 import scala.swing._
 import scala.swing.event._
-import scala.collection.mutable.{ListBuffer, ArrayBuffer}
-import java.awt.{Graphics2D, Color, geom, Point, BasicStroke}
+import java.awt.{Graphics2D, Color, geom, Point}
 import java.awt.event._
 
 import utils.Vertex
-import utils.Edge
 import utils.Graph
 import utils.GraphFile._
 
 import algorithms._
 
 
-object gui extends SimpleSwingApplication{
+object GUI extends SimpleSwingApplication{
   var movingPoint: Point = null
   var lineStart : Point = null
   var dragging = false
@@ -31,6 +29,8 @@ object gui extends SimpleSwingApplication{
     g.vertices.clear()
     g.edges.clear()
     g.graph.clear()
+    g.weighted = false
+    g.directed = false
     Vertex.n = 0
     directedBox.enabled = true
   	weightedBox.enabled = true
@@ -221,9 +221,10 @@ object gui extends SimpleSwingApplication{
   val instructionsArea = new TextArea {
     editable = false
     columns = 15
+    rows = 3
     background = Color.WHITE
-    text = "Welcome to graph GUI app. First, choose your graph's type. If you wanted to change it, you'd have to delete "+
-    "all edges of graph, so it's better to do it now. Then, start creating your own graph by adding new vertices and edges."
+    text = "Welcome to graph GUI app. First, choose your graph's properties. You should do it before adding any edges. "+
+    "Then, get creative and create your own graph or open graph which you previously saved."
     lineWrap = true
     wordWrap = true
   }
@@ -234,13 +235,13 @@ object gui extends SimpleSwingApplication{
     lineWrap = true
     columns = 15
     background = Color.LIGHT_GRAY
-    text = "Results will be here"
+    text = ""
  }
  
 
    
   def top = new MainFrame {
-    title = "Some sick title"
+    title = "Graphs"
     
     import BorderPanel.Position._
     contents = new BorderPanel {
@@ -251,22 +252,49 @@ object gui extends SimpleSwingApplication{
         val vertexButton = new Button("Add/remove/move a vertex")
         val edgeButton= new Button("Add/remove an edge")
         val clearButton = new Button("Clear")
-        val label = new Label("graph's properties")   
+        val label = new Label("Graph's properties")
+        val whatToCompute = new Label("What to compute:")
+        val sizeCheck = new CheckBox("Size")
+        val orderCheck = new CheckBox("Order")
+        val isCyclicCheck = new CheckBox("Cyclicity")
+        val isBipartiteCheck = new CheckBox("Bipartition")
+        val isConnectedCheck = new CheckBox("Connectivity")
+        val transpositionCheck = new CheckBox("Transposition")
+        val degreeCheck = new CheckBox("Degree")
+        val componentsCheck = new CheckBox("Connected components")
+        val articulationPointsCheck = new CheckBox("Articulation points")
+        val bridgesCheck = new CheckBox("Bridges")
+        val flloydCheck = new CheckBox("Floyd-Warshall")
+        val selectAll = new CheckBox("Select all")
         val computeButton = new Button("Compute")
         contents += vertexButton
-        contents += new Label(" ")
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,10))}
         contents += edgeButton
-        contents += new Label(" ")
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,10))}
         contents += clearButton
-        contents += new Label(" ")
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,10))}
         contents += label
         contents += directedBox
         contents += weightedBox
-        contents += new Label(" ")
-        contents += new Label(" ")
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,10))}
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,10))}
+        contents += whatToCompute
+        contents += sizeCheck
+        contents += orderCheck
+        contents += isCyclicCheck
+        contents += isBipartiteCheck
+        contents += isConnectedCheck
+        contents += transpositionCheck
+        contents += degreeCheck
+        contents += componentsCheck
+        contents += articulationPointsCheck
+        contents += bridgesCheck
+        contents += flloydCheck
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,5))}
+        contents += selectAll
         contents += computeButton
-        contents += new Label(" ")
-        listenTo(vertexButton, edgeButton, clearButton, directedBox, weightedBox, computeButton)
+        contents += new Separator(Orientation.Vertical){peer.setMaximumSize(new Dimension(0,10))}
+        listenTo(vertexButton, edgeButton, clearButton, directedBox, weightedBox, selectAll, computeButton)
         reactions += {
           case ButtonClicked(`vertexButton`) => 
              chosenVertices = true
@@ -285,24 +313,46 @@ object gui extends SimpleSwingApplication{
 
           case ButtonClicked(`directedBox`) => g.directed = directedBox.selected
           case ButtonClicked(`weightedBox`) => g.weighted = weightedBox.selected
-          case ButtonClicked(`computeButton`) => resultsArea.text = 
-            "size: " + g.edges.size + "\n" +
-            "order: " + g.vertices.size + "\n" +
-            "cyclic: " + Cycle.isCyclic(g).toString() + "\n" +
-            "bipartite: " + Divided.isDivided(g).toString() + "\n" +
-            "transposition: " + Transposition.transposition(g) + "\n" +
-            "degree: " + Degree.degree(g) + "\n"
+          case ButtonClicked(`selectAll`) =>
+            sizeCheck.selected = selectAll.selected
+            orderCheck.selected = selectAll.selected
+            isCyclicCheck.selected = selectAll.selected
+            isBipartiteCheck.selected = selectAll.selected
+            isConnectedCheck.selected = selectAll.selected
+            transpositionCheck.selected = selectAll.selected
+            degreeCheck.selected = selectAll.selected
+            componentsCheck.selected = selectAll.selected
+            articulationPointsCheck.selected = selectAll.selected
+            bridgesCheck.selected = selectAll.selected
+            flloydCheck.selected = selectAll.selected
+          case ButtonClicked(`computeButton`) =>
+            resultsArea.text = ""
+            if (sizeCheck.selected) resultsArea.text += "Size: " + g.edges.size + "\n\n"
+            if (orderCheck.selected) resultsArea.text += "Order: " + g.vertices.size + "\n\n"
+            if (isCyclicCheck.selected) resultsArea.text += "Cyclic: " + Cycle.isCyclic(g).toString() + "\n\n"
+            if (isBipartiteCheck.selected) resultsArea.text += "Bipartite: " + Divided.isDivided(g).toString() + "\n\n"
+            if (isConnectedCheck.selected) resultsArea.text += "Connected: " + Connectivity.isConnected(g).toString() + "\n\n"
+            if (transpositionCheck.selected) resultsArea.text += "Transposition: " + Transposition.transposition(g) + "\n\n"
+            if (degreeCheck.selected) resultsArea.text += "Degree: " + Degree.degree(g) + "\n\n"
+            if (componentsCheck.selected){
+              if (g.directed) resultsArea.text += "Strong connected components: " + ConnectedComponents.computeStrong(g) + "\n"
+              else resultsArea.text += "Connected components: " + ConnectedComponents.compute(g) + "\n"
+            }
+            if (articulationPointsCheck.selected) resultsArea.text += "Articulation points: " + ArticulationPoints.compute(g) + "\n"
+            if (bridgesCheck.selected) resultsArea.text += "Bridges: " + Bridges.compute(g) + "\n"
+            if (flloydCheck.selected) resultsArea.text += "Flloyd-Warshall results: " + "\n" + FlloydWarshall.calculate(g) + "\n"
         }
         
       } -> West
       
-      layout += instructionsArea -> South
+      layout += instructionsArea -> North
       
       
       layout += new BoxPanel(Orientation.Vertical) {
         val resultsLabel = new Label("Results")  
         contents += resultsLabel
-        contents += resultsArea
+        contents += new ScrollPane(resultsArea)
+
       } -> East
     }
     

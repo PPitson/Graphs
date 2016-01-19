@@ -1,6 +1,7 @@
 package utils
 
 object GraphFile {
+
   def saveToFile(g: Graph, pw: java.io.PrintWriter) {
     pw.println(g.directed.toString())
     pw.println(g.weighted.toString())
@@ -11,7 +12,6 @@ object GraphFile {
   
   def parse(s: String): Graph = {
     val splitSource = s.split("\n")
-    println(splitSource.length)
     for (i <- 0 until splitSource.size) splitSource(i) = splitSource(i).substring(0, splitSource(i).length-1)
     val g = new Graph(splitSource(0).toBoolean, splitSource(1).toBoolean)
     val endOfVertices = splitSource(2).toInt + 3
