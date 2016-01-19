@@ -43,7 +43,7 @@ object GUI extends SimpleSwingApplication{
   def askForWeight: Int = {
     var weight = 0
     if (weightedBox.selected){
-      def isValid(s: String) = s.forall(c => (c.isDigit || c == '.' || c == '-'))
+      def isValid(s: String) = s.forall(c => c.isDigit || c == '.' || c == '-')
       val input = Dialog.showInput(null, "Weight: ", "Type in weight", Dialog.Message.Plain, Swing.EmptyIcon, Nil, "0")
 		  if (input != None && input.get.length > 0 && isValid(input.get)){
 		    if (input.get contains ".") weight = input.get.toDouble.toInt
@@ -177,7 +177,7 @@ object GUI extends SimpleSwingApplication{
        val dx = x2 - x1
        val dy = y2 - y1
        val angle = math.atan2(dy, dx)
-       val len = (math.sqrt(dx*dx + dy*dy)).toInt
+       val len = math.sqrt(dx*dx + dy*dy).toInt
        var at = geom.AffineTransform.getTranslateInstance(x1, y1)
        at.concatenate(geom.AffineTransform.getRotateInstance(angle))
        graphics.transform(at)                
@@ -203,7 +203,7 @@ object GUI extends SimpleSwingApplication{
          val endy = e.end.point.y+Vertex.size/2
          graphics.drawLine(startx, starty, endx, endy)
          if (g.directed) drawArrow(graphics, startx, starty, (startx + endx)/2, (starty + endy)/2)
-         if (g.weighted) graphics.drawString(e.weight.toString(), (startx + endx)/2-10, (starty + endy)/2-10)
+         if (g.weighted) graphics.drawString(e.weight.toString, (startx + endx)/2-10, (starty + endy)/2-10)
        }
        for (v <- g.vertices){
          graphics.setColor(Color.BLUE)
@@ -212,7 +212,7 @@ object GUI extends SimpleSwingApplication{
          var offsetx = (0.4 * Vertex.size).toInt
          if (v.label > 9) offsetx = (0.2 * Vertex.size).toInt
          val offsety = (0.75 * Vertex.size).toInt
-         graphics.drawString(v.label.toString(), v.point.x+offsetx, v.point.y+offsety)
+         graphics.drawString(v.label.toString, v.point.x+offsetx, v.point.y+offsety)
        }
      }
     
@@ -307,10 +307,7 @@ object GUI extends SimpleSwingApplication{
              "second vertex. To remove an edge, click right button on vertices which are connected by the edge you want "+
              "to remove."
             
-          case ButtonClicked(`clearButton`) =>
-             val res = g.convert
-             clearEverything
-
+          case ButtonClicked(`clearButton`) => clearEverything
           case ButtonClicked(`directedBox`) => g.directed = directedBox.selected
           case ButtonClicked(`weightedBox`) => g.weighted = weightedBox.selected
           case ButtonClicked(`selectAll`) =>
@@ -329,9 +326,9 @@ object GUI extends SimpleSwingApplication{
             resultsArea.text = ""
             if (sizeCheck.selected) resultsArea.text += "Size: " + g.edges.size + "\n\n"
             if (orderCheck.selected) resultsArea.text += "Order: " + g.vertices.size + "\n\n"
-            if (isCyclicCheck.selected) resultsArea.text += "Cyclic: " + Cycle.isCyclic(g).toString() + "\n\n"
-            if (isBipartiteCheck.selected) resultsArea.text += "Bipartite: " + Divided.isDivided(g).toString() + "\n\n"
-            if (isConnectedCheck.selected) resultsArea.text += "Connected: " + Connectivity.isConnected(g).toString() + "\n\n"
+            if (isCyclicCheck.selected) resultsArea.text += "Cyclic: " + Cycle.isCyclic(g).toString + "\n\n"
+            if (isBipartiteCheck.selected) resultsArea.text += "Bipartite: " + Divided.isDivided(g).toString + "\n\n"
+            if (isConnectedCheck.selected) resultsArea.text += "Connected: " + Connectivity.isConnected(g).toString + "\n\n"
             if (transpositionCheck.selected) resultsArea.text += "Transposition: " + Transposition.transposition(g) + "\n\n"
             if (degreeCheck.selected) resultsArea.text += "Degree: " + Degree.degree(g) + "\n\n"
             if (componentsCheck.selected){
